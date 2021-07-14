@@ -17,7 +17,7 @@ def do_login(browser, url):
 
 def scrape(browser, url):
     if not os.path.isfile('cookies.pickle'):
-        do_login()
+        do_login(browser, url)
     
     browser.get('https://musicleague.app')
     with open('cookies.pickle', 'rb') as f:
@@ -79,3 +79,5 @@ if __name__ == "__main__":
 
     if args.process:
         process(data)
+
+    browser.close()

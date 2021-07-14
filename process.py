@@ -1,3 +1,9 @@
+def kinda_next(x):
+    try:
+        return next(x)
+    except:
+        return None
+
 def process(data):
     players = []
     for round in data:
@@ -6,17 +12,22 @@ def process(data):
             if not submitter in players:
                 players.append(submitter)
 
-    print(f'Players: {", ".join(players)}')
+    print(";".join(players))
 
     for i, round in enumerate(data):
         # Sort by players
         songs = round['songs']
-        songs = [next(song for song in songs if song['submitter'] == player) for player in players]
-        for song_i, song in enumerate(songs):
-            votes = [song['votes'].get(player, 0) for player in players]
-            tab = ';'
+        songs = [kinda_next(song for song in songs if song['submitter'] == player) for player in players]
+        for song_i, (song, submitter) in enumerate(zip(songs, players)):
             round_name = round['name']
-            print(f'{round_name if song_i == 0 else ""};{song["submitter"]};{song["name"]};{tab.join([str(vote) for vote in votes])}')
+            tab = ';'
+            if song is None:
+                song_name = '~No submission~😭'
+                votes = [0 for player in players]
+            else:
+                song_name = song['name']
+                votes = [song['votes'].get(player, 0) for player in players]
+            print(f'{round_name if song_i == 0 else ""};{submitter};{song_name};{tab.join([str(vote) for vote in votes])}')
 
 if __name__=='__main__':
     import json
